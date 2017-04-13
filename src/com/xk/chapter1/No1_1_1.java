@@ -3,12 +3,12 @@ package com.xk.chapter1;
 import java.util.Arrays;
 
 /**
- * 从N个数中找出第K小的数
+ * 有一组N个数，确定第K个最小者
  * 
  * @author X.Sation
  *
  */
-public class No1_1 {
+public class No1_1_1 {
 
 	public static void main(String[] args) {
 		int k = 100000;
