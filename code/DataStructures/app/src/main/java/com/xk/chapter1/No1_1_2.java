@@ -70,8 +70,6 @@ public class No1_1_2 {
 	/**
 	 * 方法一，检查每一个有效三元组（行，列，方向）是否有单词存在
 	 * 
-	 * @param datas
-	 * @return
 	 */
 	public static void method1() {
 		long start = System.currentTimeMillis();
@@ -182,8 +180,6 @@ public class No1_1_2 {
 	/**
 	 * 方法二，检查每一个有效四元组（行，列，方向，字符长度）是否有单词存在
 	 * 
-	 * @param datas
-	 * @return
 	 */
 	public static void method2() {
 		long start = System.currentTimeMillis();
