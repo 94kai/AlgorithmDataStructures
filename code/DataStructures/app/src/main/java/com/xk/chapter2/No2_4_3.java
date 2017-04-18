@@ -11,33 +11,36 @@ import static javax.swing.text.html.HTML.Attribute.N;
  */
 
 public class No2_4_3 {
-    private static int[] datas = new int[100000];
+    private static int[] datas = new int[10000];
+    //数组中数字范围 -number~number
+    private static int number = 250;
 
     public static void main(String[] args) {
 
         Random random = new Random();
-        for (int i = 0; i < 100000; i++) {
-            int j = random.nextInt(500);
-            datas[i] = j - 250;
+        for (int i = 0; i < datas.length; i++) {
+            int j = random.nextInt(number * 2);
+            datas[i] = j - number;
         }
 
 
         No2_4_3 self = new No2_4_3();
 
-//        for (int i = 0; i < datas.length; i++) {
-//            System.out.print(datas[i] + " ");
-//        }
         System.out.println();
-        long start = System.currentTimeMillis();
-        System.out.println(self.method3(datas, 0, datas.length - 1));
-        System.out.println("method3:" + (System.currentTimeMillis() - start));
 
+
+        long start = System.currentTimeMillis();
+        System.out.println(self.method4(datas));
+        System.out.println("method4耗时:" + (System.currentTimeMillis() - start)+"ms");
+        start = System.currentTimeMillis();
+        System.out.println(self.method3(datas, 0, datas.length - 1));
+        System.out.println("method3耗时:" + (System.currentTimeMillis() - start)+"ms");
         start = System.currentTimeMillis();
         System.out.println(self.method2(datas));
-        System.out.println("method2:" + (System.currentTimeMillis() - start));
+        System.out.println("method2耗时:" + (System.currentTimeMillis() - start)+"ms");
         start = System.currentTimeMillis();
         System.out.println(self.method1(datas));
-        System.out.println("method1:" + (System.currentTimeMillis() - start));
+        System.out.println("method1耗时:" + (System.currentTimeMillis() - start)+"ms");
 
 
     }
@@ -135,5 +138,28 @@ public class No2_4_3 {
         int middleMaxSum = preAndCenterMaxSum + afterAndCenterMaxSum;
 
         return Math.max(Math.max(preMaxSum, afterMaxSum), middleMaxSum);
+    }
+
+    /*
+    * 1.任何一个小于零的元素都不可以作为子序列的起点，因为用他的下一个元素作为子序列就可以得以优化
+    * 2.一个子序列的和，如果是负数，那么它将不会是另一个子序列的前缀，因为去掉这个前缀，另一个子序列就会被优化
+    * 该算法在任意时刻都可以对读入的数据给出正确的答案。 “联机算法”
+    * @param datas
+    * @return
+    */
+    private int method4(int[] datas) {
+        int maxSum = 0, thisSum = 0;
+        for (int i = 0; i < datas.length; i++) {
+            thisSum+=datas[i];
+            //如果累加起来的和小于零，就把他置为零，前面说了，一个子序列的和如果是负数，那他将不可以作为前缀
+            if(thisSum<0){
+                thisSum=0;
+            }
+            //如果不小于0，那么当前累加起来的子序列一定是最后结果序列的前缀（起码目前认为是），所以试图把他存入到maxSum
+            if(thisSum>maxSum){
+                maxSum=thisSum;
+            }
+        }
+        return maxSum;
     }
 }
