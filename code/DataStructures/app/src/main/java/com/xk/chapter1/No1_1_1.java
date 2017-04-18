@@ -71,4 +71,8 @@ public class No1_1_1 {
 			}
 		}
 	}
+
+	public int[] m(){
+		return new int[10];
+	}
 }
