@@ -11,7 +11,7 @@ import static javax.swing.text.html.HTML.Attribute.N;
  */
 
 public class No2_4_3 {
-    private static int[] datas = new int[10000];
+    private static int[] datas = new int[10001];
     //数组中数字范围 -number~number
     private static int number = 250;
 
@@ -25,9 +25,7 @@ public class No2_4_3 {
 
 
         No2_4_3 self = new No2_4_3();
-
         System.out.println();
-
 
         long start = System.currentTimeMillis();
         System.out.println(self.method4(datas));
@@ -41,8 +39,6 @@ public class No2_4_3 {
         start = System.currentTimeMillis();
         System.out.println(self.method1(datas));
         System.out.println("method1耗时:" + (System.currentTimeMillis() - start)+"ms");
-
-
     }
 
 
