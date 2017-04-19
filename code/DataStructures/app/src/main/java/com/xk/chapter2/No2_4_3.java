@@ -11,7 +11,7 @@ import static javax.swing.text.html.HTML.Attribute.N;
  */
 
 public class No2_4_3 {
-    private static int[] datas = new int[10001];
+    private static int[] datas = new int[100001];
     //数组中数字范围 -number~number
     private static int number = 250;
 
