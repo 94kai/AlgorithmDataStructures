@@ -1,344 +1,176 @@
 package com.xk.chapter3.no_3_5;
 
+import com.xk.chapter3.no_3_4.MyArrayList;
+
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
+
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 /**
- * LinkedList的实现
+ * LinkedList的实现(不考虑数组越界，考虑并发处理)
  * Created by xuekai on 2017/4/20.
  */
 
-public class MyLinkedList {
-    public static void main(String[] args) {
-        MyLinkedList self = new MyLinkedList();
+public class MyLinkedList<T> implements Iterable<T> {
 
-        LinkedList<Object> list = new LinkedList<>();
-        for (int i = 0; i < 400000; i++) {
-            list.add(i);
-        }
-        long start=System.currentTimeMillis();
-        self.removeEven(list);
-        System.out.println("耗时："+(System.currentTimeMillis()-start));
+    private int size = 0;
+    public Node head = new Node(null, null, null);
+    private Node tail = new Node(null, null, null);
+    private int modCount = 0;
 
-//        for (Object o : list) {
-//            System.out.println(o);
-//        }
-//        LinkedList linkedList = new LinkedList();
-//        List arrayList=new ArrayList();
-//        self.addToLast(arrayList,100000);
-//        self.addToLast(linkedList,100000);
-//        arrayList.clear();
-//        linkedList.clear();
-//
-//        self.addToFirst(arrayList,100000);
-//        self.addToFirst(linkedList,100000);
 
+    public MyLinkedList() {
+        clear();
+    }
+
+    public void clear() {
+        head.nextNode = tail;
+        tail.lastNode = head;
+        //还有对每一个node进行清除，解决内存泄漏问题。为了方便，这里不处理了
+        size = 0;
+        modCount++;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    public void add(T item) {
+        addBefore(tail, item);
+    }
+
+    public void add(T item, int index) {
+        addBefore(getNode(index), item);
+    }
+
+    public T get(int index) {
+        return getNode(index).value;
+    }
+
+    public void set(T value, int index) {
+        getNode(index).value = value;
     }
 
 
-    /**
-     * 高效的删除偶数数据
-     * @param list
-     */
-    private void removeEven(List list){
-        int i=0;
-        Iterator iterator = list.iterator();
-        while (iterator.hasNext()) {
-            if (((int)iterator.next())%2==0) {
-                iterator.remove();
+    public T remove(int index) {
+        Node<T> node = getNode(index);
+        remove(node);
+        return node.value;
+    }
+
+    public void addBefore(Node<T> node, T value) {
+        size++;
+        modCount++;
+        node.lastNode = node.lastNode.nextNode = new Node<>(node.lastNode, node, value);
+    }
+
+    public T remove(Node<T> node) {
+        node.nextNode.lastNode = node.lastNode;
+        node.lastNode.nextNode = node.nextNode;
+        size--;
+        modCount++;
+        return node.value;
+    }
+
+    public Node<T> getNode(int index) {
+        Node<T> node;
+
+        int middle = size() / 2;
+        if (index > middle) {
+            node = tail.lastNode;
+            for (int i = size; i > index; i--) {
+                node = node.lastNode;
+            }
+        } else {
+            node = head.nextNode;
+            for (int i = 0; i < index; i++) {
+                node = node.nextNode;
             }
         }
+
+        return node;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new MyLinkedList.MyIterator();
     }
 
 
-    /**
-     * arraylist添加到头部是很耗时的
-     * linkedlist不会
-     * @param list
-     * @param n
-     */
-    private void addToFirst(List<Integer> list,int n){
-        long start=System.currentTimeMillis();
-        for (int i = 0; i < n; i++) {
-            list.add(0,i);
-        }
-        System.out.println("添加到头部，"+list.getClass().getSimpleName()+"耗时："+(System.currentTimeMillis()-start));
-    }
+    private class MyIterator<T> implements Iterator<T> {
 
-    /**
-     * arraylist添加到尾部不耗时的
-     * linkedlist也不会
-     * @param list
-     * @param n
-     */
-    private void addToLast(List<Integer> list,int n){
-        long start=System.currentTimeMillis();
-        for (int i = 0; i < n; i++) {
-            list.add(i);
-        }
-        System.out.println("添加到尾部，"+list.getClass().getSimpleName()+"耗时："+(System.currentTimeMillis()-start));
-    }
+        /**
+         * 只有调用了next，才可以调用remove，调用一次next，只能remove一次
+         */
+        private boolean okToRemove = false;
+        private Node<T> node = head.nextNode;
 
+        /**
+         * 预期的modCount
+         */
+        private int expectedModCount = modCount;
 
-    //Collection继承了Iterable接口，使得它可以使用增强for循环，换句话说，实现了Iterable的类可以使用增强for循环
-    Collection collection = new Collection() {
-
-        @Override
-        public int size() {
-            return 0;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return false;
-        }
-
-        @Override
-        public boolean contains(Object o) {
-            return false;
-        }
-
-        @Override
-        public Iterator iterator() {
-            //实现Iterable接口，就要实现这个方法，他要返回一个Iterator对象，该对象要实现三个方法，这样就可以实现
-            //Iterator的功能了。
-            //1.boolean hasNext();  2.E next();  3.void remove();
-
-
-            //Iterator中的remove方法，可以remove刚才next时返回的这一项，remove之后，如果没有调用next是不能再
-            //继续remove的，而Collection中的remove需要知道remove的是哪一项，所以效率会低一点。另一方面，如果
-            //正在迭代某一个集合，那么对这个集合进行结构的改变(增加，删除等)，会抛出ConcurrentModificationException
-            //异常，但是用Iterator的remove方法，不会，所以推荐使用这个remove
-            return null;
-        }
-
-
-        @Override
-        public boolean add(Object o) {
-            return false;
-        }
-
-        @Override
-        public boolean remove(Object o) {
-            return false;
-        }
-
-        @Override
-        public void clear() {
-
-        }
-
-        @Override
-        public boolean retainAll(Collection c) {
-            return false;
-        }
-
-        @Override
-        public Object[] toArray(Object[] a) {
-            return new Object[0];
-        }
-// ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑以上表示了一个Collection（集合必备的功能），下面也是必备的，不过含义类似
-
-
-        @Override
-        public boolean removeAll(Collection c) {
-            return false;
-        }
-
-        @Override
-        public boolean containsAll(Collection c) {
-            return false;
-        }
-
-
-        @Override
-        public boolean addAll(Collection c) {
-            return false;
-        }
-
-        @Override
-        public Object[] toArray() {
-            return new Object[0];
-        }
-    };
-
-
-    //ArrayList get/set方便，add/remove耗时，用的是可变数组
-    //LinkedList 相反，用的是双链表
-    List list = new List() {
-        @Override
-        public Object get(int index) {
-            return null;
-        }
-
-        @Override
-        public Object set(int index, Object element) {
-            return null;
-        }
-
-        @Override
-        public int indexOf(Object o) {
-            return 0;
-        }
-
-        @Override
-        public int lastIndexOf(Object o) {
-            return 0;
-        }
-
-        @Override
-        public ListIterator listIterator() {
-            return null;
-        }
-
-        @Override
-        public ListIterator listIterator(int index) {
-            return null;
-        }
-
-        @Override
-        public List subList(int fromIndex, int toIndex) {
-            return null;
-        }
-
-// ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑以上表示了一个List（相比于Collection新增的功能），下面也是必备的，不过含义类似
-
-
-        @Override
-        public int size() {
-            return 0;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return false;
-        }
-
-        @Override
-        public boolean contains(Object o) {
-            return false;
-        }
-
-        @Override
-        public Iterator iterator() {
-            return null;
-        }
-
-        @Override
-        public Object[] toArray() {
-            return new Object[0];
-        }
-
-        @Override
-        public boolean add(Object o) {
-            return false;
-        }
-
-        @Override
-        public boolean remove(Object o) {
-            return false;
-        }
-
-        @Override
-        public boolean addAll(Collection c) {
-            return false;
-        }
-
-        @Override
-        public boolean addAll(int index, Collection c) {
-            return false;
-        }
-
-        @Override
-        public void clear() {
-
-        }
-
-
-        @Override
-        public void add(int index, Object element) {
-
-        }
-
-        @Override
-        public Object remove(int index) {
-            return null;
-        }
-
-
-        @Override
-        public boolean retainAll(Collection c) {
-            return false;
-        }
-
-        @Override
-        public boolean removeAll(Collection c) {
-            return false;
-        }
-
-        @Override
-        public boolean containsAll(Collection c) {
-            return false;
-        }
-
-        @Override
-        public Object[] toArray(Object[] a) {
-            return new Object[0];
-        }
-    };
-
-
-    /**
-     * 继承自Iterator，比它添加了previous的功能
-     */
-    ListIterator listIterator=new ListIterator() {
         @Override
         public boolean hasNext() {
-            return false;
+            return node != tail;
         }
 
         @Override
-        public Object next() {
-            return null;
-        }
-
-        @Override
-        public boolean hasPrevious() {
-            return false;
-        }
-
-        @Override
-        public Object previous() {
-            return null;
-        }
-
-        @Override
-        public int nextIndex() {
-            return 0;
-        }
-
-        @Override
-        public int previousIndex() {
-            return 0;
+        public T next() {
+            if (expectedModCount != modCount) {
+                throw new ConcurrentModificationException("预期的不对");
+            }
+            T value = node.value;
+            node = node.nextNode;
+            okToRemove = true;
+            return value;
         }
 
         @Override
         public void remove() {
+            if (expectedModCount != modCount) {
+                throw new IllegalStateException("预期的不对");
+            }
+            if (!okToRemove) {
+                //不可以remove
+                throw new IllegalStateException("没有调用next，不能remove");
+            }
 
+            MyLinkedList.this.remove(node.lastNode);
+            expectedModCount++;
+            okToRemove = false;
+
+        }
+    }
+
+    private class Node<T> {
+        public Node lastNode;
+        public Node nextNode;
+        public T value;
+
+        public Node(Node lastNode, Node nextNode, T value) {
+            this.lastNode = lastNode;
+            this.nextNode = nextNode;
+            this.value = value;
         }
 
         @Override
-        public void set(Object o) {
-
+        public String toString() {
+            return "Node{" +
+                    "lastNode=" + lastNode +
+                    ", nextNode=" + nextNode +
+                    ", value=" + value +
+                    '}';
         }
-
-        @Override
-        public void add(Object o) {
-
-        }
-    };
-
+    }
 }

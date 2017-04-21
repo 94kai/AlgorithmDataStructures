@@ -1,5 +1,7 @@
 package com.xk.chapter3.no_3_4;
 
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -19,15 +21,14 @@ public class Main {
         objects.add(42);
         objects.add(24);
 
-        Iterator iterator = objects.iterator();
-        while (iterator.hasNext()){
-            if (((int)iterator.next())%2==0) {
-                iterator.remove();
-            }
-        }
-
-        for (Object object : objects) {
-            System.out.println(object);
-        }
+//        Iterator iterator = objects.iterator();
+//        while (iterator.hasNext()){
+//            if (((int)iterator.next())%2==0) {
+//                iterator.remove();
+//            }
+//        }
+//        for (int i = 0; i < objects.size(); i++) {
+//            objects.remove(objects.get(i));
+//        }
     }
 }

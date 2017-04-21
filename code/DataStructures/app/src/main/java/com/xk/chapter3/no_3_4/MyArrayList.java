@@ -10,7 +10,7 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 
 /**
- * ArrayList的实现
+ * ArrayList的实现（不考虑并发处理，考虑数组越界）
  * Created by xuekai on 2017/4/20.
  */
 
