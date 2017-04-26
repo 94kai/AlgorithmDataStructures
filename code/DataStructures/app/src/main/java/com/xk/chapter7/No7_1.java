@@ -1,4 +1,4 @@
-package com.xk.chapter7.chapter4;
+package com.xk.chapter7;
 
 import java.util.Random;
 
@@ -10,11 +10,11 @@ public class No7_1 {
     public static void main(String args[]) {
         No7_1 self = new No7_1();
 
-        int count = 600000;
+        int count = 900000;
         Random random = new Random();
         int[] data = new int[count];
         for (int i = 0; i < count; i++) {
-//            data[i]=random.nextInt(count);
+//            data[i] = random.nextInt(count);
             data[i] = count - i;
         }
 //        long start = System.currentTimeMillis();
@@ -25,21 +25,29 @@ public class No7_1 {
 ////        }
 //
 //
-//        for (int i = 0; i < data.length - 1; i++) {
-//            int i1 = data[i + 1] - data[i];
-//            if (i1 < 0) {
-//                System.out.println("hhh" + i);
-//            }
-//        }
 
         long start = System.currentTimeMillis();
 
+//        堆排序
+//        long start = System.currentTimeMillis();
+//
+//        self.dui(data);
+//        System.out.println(System.currentTimeMillis() - start);
+
+
 //        int[] data = {9, 12, 17, 30, 50, 20, 60, 65, 4, 19};
+
+        long start1 = System.currentTimeMillis();
         self.dui(data);
-        System.out.println(System.currentTimeMillis() - start);
-//        for (int i = 0; i < data.length; i++) {
-//            System.out.println(data[i]);
-//        }
+
+        System.out.println(System.currentTimeMillis() - start1);
+
+        for (int i = 0; i < data.length - 1; i++) {
+            int i1 = data[i + 1] - data[i];
+            if (i1 < 0) {
+                System.out.println("hhh" + i);
+            }
+        }
     }
 
 
@@ -103,40 +111,87 @@ public class No7_1 {
      */
     private void dui(int[] data) {
         int n = data.length;
-        for (int i = n - 1; i >= 0; i--) {
-            turnMinHeap(data, i, n);
+
+        for (int i = n / 2; i >= 0; i--) {
+            turnMaxHeap(data, i, n);
         }
-        for (int k = 1; k < n; k++) {
-            swop(data, 0, n - k);
-            for (int i = n - k - 1; i >= 0; i--) {
-                turnMinHeap(data, i, n - k);
-            }
+
+        for (int i = n - 1; i >= 0; i--) {
+            swop(data, 0, i);
+            turnMaxHeap(data, 0, i);
         }
     }
 
     /**
-     * 把data[n]和他的左右子树（总共3个元素）转换成最小堆，如果没有孩子，就不用管了
+     * 把data[n]和他的左右子树转换成最大堆，如果没有孩子，就不用管了  递归写法
+     * *****注意，递归写法一定要小心坑：不要重复计算，比如我之前在这个方法里没有加入if (temp==left)的判断，导致运算时间在该方法内乘2了，总效率就不是除2这么简单了
      */
-    private void turnMinHeap(int[] data, int n, int length) {
+
+    private void turnMaxHeap(int[] data, int n, int length) {
         int left = n * 2 + 1;
         int right = n * 2 + 2;
         if (length <= left) {//没有孩子
             return;
         }
 
+        int temp;
+
         if (length <= right) {//只有左孩子
-            if (data[n] <= data[left]) {
-                return;
+            temp = left;
+        } else {
+            temp = ((data[left] > data[right]) ? left : right);
+        }
+
+        if (data[n] < data[temp]) {
+            swop(data, n, temp);
+        }
+        if (temp == left) {//这一步很关键，如果交换的是左孩子，那么右孩子就没必要动了
+            turnMaxHeap(data, left, length);
+        } else {
+            if (length <= right) {//只有左孩子
+            } else {
+                turnMaxHeap(data, right, length);
             }
-            swop(data, n, left);
-            return;
+
         }
-        if (data[n] <= ((data[left] < data[right]) ? data[left] : data[right])) {
-            return;
-        }
-        swop(data, n, ((data[left] < data[right]) ? left : right));
+
+
     }
 
+
+    /**
+     * 把data[n]和他的左右子树转换成最大堆，如果没有孩子，就不用管了  非递归写法
+     */
+    private void turnMaxHeap1(int[] data, int n, int length) {
+        int left = n * 2 + 1;
+        int right = n * 2 + 2;
+
+        int largest = n;
+        int temp;
+
+        while (left < length || right < length) {
+            if (left < length && data[largest] < data[left]) {
+                largest = left;
+            }
+
+            if (right < length && data[largest] < data[right]) {
+                largest = right;
+            }
+
+            if (n != largest)   //如果最大值不是父节点
+            {
+                temp = data[largest]; //交换父节点和和拥有最大值的子节点交换
+                data[largest] = data[n];
+                data[n] = temp;
+
+                n = largest;         //新的父节点，以备迭代调堆
+                left = n * 2 + 1;
+                right = n * 2 + 2;
+            } else {
+                break;
+            }
+        }
+    }
 
     /**
      * 交换数组中的两个元素
@@ -196,3 +251,4 @@ public class No7_1 {
         }
     }
 }
+
