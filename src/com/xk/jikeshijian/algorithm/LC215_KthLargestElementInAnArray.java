@@ -27,8 +27,8 @@ public class LC215_KthLargestElementInAnArray {
 
     public static void main(String[] args) {
         Solution solution = new Solution();
-        int k = 7;
-        int[] nums = {1, 2, 3, 4, 5};
+        int k = 2;
+        int[] nums = {3,2,1,5,6,4};
         System.out.println("result:" + solution.findKthLargest(nums, k));
     }
 
@@ -36,9 +36,26 @@ public class LC215_KthLargestElementInAnArray {
 
 class Solution {
 
-    public int findKthLargest(int[] nums, int k) {
-        PriorityQueue<Integer> integers = new PriorityQueue<Integer>(k);
+    //利用k长度的小顶堆（java优先队列实现了小顶堆）来解这个题，容易了很多
+    int findKthLargest(int[] nums, int k) {
+        //默认是小顶堆，即堆顶元素最小
+        PriorityQueue<Integer> queue = new PriorityQueue<Integer>(k);
+        for (int num : nums) {
 
-        return 0;
+            if (queue.size() < k) {
+                //如果长度还小于k，直接加入优先队列
+                queue.add(num);
+            } else {
+                //长度大于k，先判断这个元素和堆顶的元素大小
+                if (queue.peek() < num) {
+                    //如果堆顶的比这个数小，那堆顶的太小了，把堆顶的移除，把这个数加入
+                    queue.poll();
+                    queue.add(num);
+                } else {
+                    //如果堆顶的都比这个数大，那这个数太小了，不需要加入
+                }
+            }
+        }
+        return queue.peek();
     }
 }

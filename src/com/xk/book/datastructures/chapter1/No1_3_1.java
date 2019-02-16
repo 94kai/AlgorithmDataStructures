@@ -1,7 +1,6 @@
 package com.xk.book.datastructures.chapter1;
 
 
-import static com.xk.chapter1.No1_1_2.s;
 
 /**
  * 现有一个方法，printDigit,只能打印一个正一位数，请写一个方法print，用来打印任意一个正整数

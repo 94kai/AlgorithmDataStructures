@@ -1,6 +1,5 @@
 package com.xk.book.datastructures.chapter3.no_3_5;
 
-import com.xk.chapter3.no_3_4.MyArrayList;
 
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
