@@ -26,7 +26,7 @@ public class LC215_KthLargestElementInAnArray {
 
 
     public static void main(String[] args) {
-        Solution solution = new Solution();
+        Solution215 solution = new Solution215();
         int k = 2;
         int[] nums = {3,2,1,5,6,4};
         System.out.println("result:" + solution.findKthLargest(nums, k));
@@ -34,7 +34,7 @@ public class LC215_KthLargestElementInAnArray {
 
 }
 
-class Solution {
+class Solution215 {
 
     //利用k长度的小顶堆（java优先队列实现了小顶堆）来解这个题，容易了很多
     int findKthLargest(int[] nums, int k) {
