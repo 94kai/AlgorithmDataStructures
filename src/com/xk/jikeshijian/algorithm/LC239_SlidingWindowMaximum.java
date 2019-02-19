@@ -32,10 +32,11 @@ public class LC239_SlidingWindowMaximum {
 
     public static void main(String[] args) {
         Solution239_2 solution = new Solution239_2();
+        //该用例可以证明，双端队列法需要while循环
 //        int k = 3;
 //        int[] nums = {1, 3, -1, -3, 5, 3, 6, 7};
 
-        int k = 3;
+        int k = 4;
         int[] nums = {1, 3, 1, 2, 0, 5};
 //        System.out.println(solution.maxSlidingWindow(nums,k));
         for (int i : solution.maxSlidingWindow(nums, k)) {
@@ -77,6 +78,11 @@ class Solution239_1 {
 
 
 //用双队列的方式解。注意 window里存的是下标
+//实际上在新元素i进队列的时候会将前面下标对应的值小于i对应的值的元素均剔除，且是从队尾开始，剔除之后再让新元素i入队。
+// 所以双端队列主要是用到了两点：
+//              一是在队头取当前窗口最大值，
+//              二是新进元素从队尾开始剔除小于自己的元素。
+// 对于大小为N的列表，窗口大小为K，在后面N-K次循环中，每次都会新进一个元素，剔除一个或多个元素，所以总体来看会是O(n)的时间复杂度
 class Solution239_2 {
     public int[] maxSlidingWindow(int[] nums, int k) {
         if (nums.length == 0) {

@@ -57,15 +57,21 @@
     <inspection_tool class="JdConcurrentExceptionWithModifyOriginSubList" enabled="false" level="CRITICAL (严重)" enabled_by_default="false" />
     <inspection_tool class="JdConstantFieldShouldBeUpperCase" enabled="false" level="CRITICAL (严重)" enabled_by_default="false" />
     <inspection_tool class="JdCountDownShouldInFinally" enabled="false" level="MAJOR (一般)" enabled_by_default="false" />
+    <inspection_tool class="JdCyclomaticComplexityBlock" enabled="false" level="BLOCKER (超高复杂度)" enabled_by_default="false" />
+    <inspection_tool class="JdCyclomaticComplexityCritical" enabled="false" level="CRITICAL (高复杂度)" enabled_by_default="false" />
+    <inspection_tool class="JdCyclomaticComplexityMajor" enabled="false" level="MAJOR (中复杂度)" enabled_by_default="false" />
+    <inspection_tool class="JdCyclomaticComplexityWarning" enabled="false" level="WARNING (低复杂度)" enabled_by_default="false" />
     <inspection_tool class="JdDeprecation" enabled="false" level="CRITICAL (严重)" enabled_by_default="false" />
     <inspection_tool class="JdDontModifyInForeachCircle" enabled="false" level="BLOCKER (崩溃)" enabled_by_default="false" />
     <inspection_tool class="JdEnumConstantsMustHaveComment" enabled="false" level="CRITICAL (严重)" enabled_by_default="false" />
     <inspection_tool class="JdEqualsAvoidNull" enabled="false" level="CRITICAL (严重)" enabled_by_default="false" />
     <inspection_tool class="JdExceptionClassShouldEndWithException" enabled="false" level="CRITICAL (严重)" enabled_by_default="false" />
     <inspection_tool class="JdIbatisMethodQueryForList" enabled="false" level="MAJOR (一般)" enabled_by_default="false" />
+    <inspection_tool class="JdJDAndroidSystemOut" enabled="false" level="WARNING (警告)" enabled_by_default="false" />
     <inspection_tool class="JdJDAvoidComplexCondition" enabled="false" level="WARNING (警告)" enabled_by_default="false" />
     <inspection_tool class="JdJDClassCast" enabled="false" level="CRITICAL (严重)" enabled_by_default="false" />
     <inspection_tool class="JdJDImageUtilInflate" enabled="false" level="CRITICAL (严重)" enabled_by_default="false" />
+    <inspection_tool class="JdJDLog" enabled="false" level="MAJOR (一般)" enabled_by_default="false" />
     <inspection_tool class="JdJDMethodBodyCount" enabled="false" level="WARNING (警告)" enabled_by_default="false" />
     <inspection_tool class="JdJDMethodParamsCount" enabled="false" level="MAJOR (一般)" enabled_by_default="false" />
     <inspection_tool class="JdJDSafeDruid" enabled="false" level="中危风险" enabled_by_default="false" />
